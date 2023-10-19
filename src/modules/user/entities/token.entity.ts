@@ -14,8 +14,8 @@ export class Token extends BaseEntity {
   @Column("timestamp")
   expire_in: string;
 
-  @Column("uuid")
-  user_id: string;
+  @Column()
+  identifier: string;
 
   @Column({ default: false })
   used: boolean;

@@ -26,7 +26,7 @@ seeder({
     TypeOrmModule.forFeature([Permission, Role, User]),
   ],
 }).run([
-  DefaultPermissionSeeder,
-  DefaultRoleSeeder,
-  DefaultUserSeeder,
+  // DefaultPermissionSeeder,
+  // DefaultRoleSeeder,
+  // DefaultUserSeeder,
 ]);

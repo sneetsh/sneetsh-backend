@@ -86,14 +86,9 @@ export class User extends BaseEntity {
   @JoinTable({ name: 'user_roles' })
   roles: Role[];
 
-  @BeforeInsert()
-  async beforeInsert() {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-
   // ENTITY METHOD
-  isSamePassword(password: string): boolean {
-    return bcrypt.compareSync(password, this.password);
+  isSamePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
   }
 
   toJson() {

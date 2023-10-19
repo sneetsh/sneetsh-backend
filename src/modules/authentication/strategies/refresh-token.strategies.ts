@@ -51,7 +51,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     const savedToken: any = await this.tokenRepository.findOne({
       where: {
         type: TOKEN_TYPES.REFRESH_TOKEN,
-        user_id: token.user_id,
+        identifier: token.identifier,
         token: refreshToken,
       }
     });
