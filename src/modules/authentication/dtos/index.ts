@@ -34,7 +34,7 @@ export class UserSignupDto {
     @Transform(({ value }) => value.toLowerCase())
     email: string;
 
-    @IsIn(Object.keys(ACCOUNT_TYPE))
+    @IsIn(Object.values(ACCOUNT_TYPE))
     @Transform(({value})=> value.toLowerCase())
     account_type: string;
 

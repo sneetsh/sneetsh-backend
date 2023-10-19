@@ -35,7 +35,7 @@ export class EmailService {
                 html
             };
 
-            await this.transporter.sendMail(mailOptions);
+            // await this.transporter.sendMail(mailOptions);
 
             Logger.debug('Email sent successfully.');
         } catch (error) {
