@@ -15,6 +15,8 @@ const getAllowedOrigins = (environment: Environment) => {
 };
 
 async function bootstrap() {
+  process.on('warning', (e) => console.log(e.stack));
+
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
     bufferLogs: true,
