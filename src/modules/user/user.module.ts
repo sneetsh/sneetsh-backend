@@ -28,7 +28,7 @@ import { MulterModule } from '@nestjs/platform-express';
         }),
         TypeOrmModule.forFeature([Role, Permission, User, Token]),
     ],
-    exports: [TypeOrmModule, UserService],
+    exports: [UserService],
     controllers: [UserController, AdminUserController, StaffController],
     providers: [AuthService, UserService, EmailService],
 })
