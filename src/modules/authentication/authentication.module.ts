@@ -23,7 +23,7 @@ import { Role } from "../role-management/entities/role.entity";
       useFactory: async (config: ConfigService) => config.get("auth.jwt"),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([User, Token, Role])
+    TypeOrmModule.forFeature([Token, User, Role])
   ],
   providers: [JwtUserStrategy, JwtRefreshStrategy, AuthService, EmailService],
   exports: [JwtModule, AuthService],

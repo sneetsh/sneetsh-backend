@@ -4,17 +4,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 
-import { AdminController } from './controllers/admin.controller';
-
 import { UserService } from 'src/modules/user/services/user.service';
-import { AuthService } from '../authentication/service/auth.service';
 
 import { Role } from '../role-management/entities/role.entity';
 import { Permission } from '../role-management/entities/permission.entity';
-import { User } from 'src/modules/user/entities/user.entity';
-import { Token } from './entities/token.entity';
-import { EmailService } from 'src/common/services/email.service';
-import { UserController } from './controllers/user.controller';
+import { AdminController } from './controllers/admin.controller';
+import { User } from '../user/entities/user.entity';
+import { Media } from './entities/media.entity';
+import { MediaController } from './controllers/media.controller';
+import { Token } from '../user/entities/token.entity';
+import { MediaService } from './services/media.service';
 
 @Module({
     imports: [
@@ -24,11 +23,11 @@ import { UserController } from './controllers/user.controller';
             useFactory: async (config: ConfigService) => config.get("auth.jwt"),
             inject: [ConfigService],
         }),
-        TypeOrmModule.forFeature([Role, Permission, User, Token]),
+        TypeOrmModule.forFeature([Role, Permission, User, Media, Token]),
     ],
-    exports: [],
-    controllers: [AdminController, UserController],
-    providers: [AuthService, UserService, EmailService],
+    exports: [UserService],
+    controllers: [MediaController, AdminController],
+    providers: [UserService, MediaService],
 })
 
-export class UserModule { }
+export class MediaModule { }

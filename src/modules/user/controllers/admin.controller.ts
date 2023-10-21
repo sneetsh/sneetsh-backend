@@ -11,7 +11,7 @@ import { Permissions } from "src/modules/authentication/decorators/permission.de
 
 @Controller("admin/users")
 @UseGuards(UserAuthGuard)
-export class AdminUserController {
+export class AdminController {
   constructor(
     private readonly userService: UserService,
   ) { }

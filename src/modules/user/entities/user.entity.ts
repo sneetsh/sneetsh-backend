@@ -2,17 +2,19 @@ import * as bcrypt from 'bcryptjs';
 import { Role } from '../../role-management/entities/role.entity';
 import {
   BaseEntity,
-  BeforeInsert,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+
 import { ACCOUNT_TYPE, GENDER } from 'src/common/interfaces';
+import { Media } from 'src/modules/media/entities/media.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -85,6 +87,23 @@ export class User extends BaseEntity {
   @ManyToMany(() => Role, (role) => role.users, { cascade: true })
   @JoinTable({ name: 'user_roles' })
   roles: Role[];
+
+  @OneToMany(() => Media, (media) => media.user)
+  media: Media[];
+
+  @ManyToMany(() => Media, (media) => media.features)
+  @JoinTable({
+    name: 'user_features',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id'
+    },
+    inverseJoinColumn: {
+      name: 'media_id',
+      referencedColumnName: 'id'
+    }
+  })
+  featured: Media[];
 
   // ENTITY METHOD
   isSamePassword(password: string): Promise<boolean> {

@@ -73,6 +73,14 @@ export class Role extends BaseEntity {
   })
   @JoinTable({
     name: "roles_permission",
+    joinColumn: {
+      name: 'role_id',
+      referencedColumnName: "id"
+    },
+    inverseJoinColumn: {
+      name: 'permission_id',
+      referencedColumnName: "id"
+    }
   })
   permissions: Permission[];
 

@@ -11,6 +11,7 @@ import { UserModule } from './modules/user/user.module';
 import { RoleManagementModule } from './modules/role-management/role-management.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { MediaModule } from './modules/media/media.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthenticationModule } from './modules/authentication/authentication.mo
     }),
     DatabaseModule,
     AuthenticationModule,
+    MediaModule,
     UserModule,
     RoleManagementModule
   ],

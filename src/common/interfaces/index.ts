@@ -1,4 +1,3 @@
-
 export enum ACCOUNT_TYPE {
     ARTIST = 'artist',
     PRODUCER = 'producer',
@@ -6,6 +5,11 @@ export enum ACCOUNT_TYPE {
 }
 
 export enum GENDER {
-    male = 'male',
-    female = 'female'
+    MALE = 'male',
+    FEMALE = 'female'
+}
+
+export enum MEDIA_TYPE {
+    SONG = 'song',
+    BEAT = 'beat'
 }
