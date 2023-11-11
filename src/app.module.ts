@@ -12,6 +12,7 @@ import { RoleManagementModule } from './modules/role-management/role-management.
 import { DatabaseModule } from './modules/database/database.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { MediaModule } from './modules/media/media.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { MediaModule } from './modules/media/media.module';
     AuthenticationModule,
     MediaModule,
     UserModule,
-    RoleManagementModule
+    RoleManagementModule,
+    UploadModule
   ],
   controllers: [],
   providers: [],

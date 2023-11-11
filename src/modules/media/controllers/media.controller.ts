@@ -1,7 +1,9 @@
-import { Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from "@nestjs/common";
 import { MediaService } from "../services/media.service";
 import { AddSongDTO } from "../dtos";
 import { PaginationDTO } from "src/common/dto";
+import { GetUser } from "src/common/decorators";
+import { User } from "src/modules/user/entities/user.entity";
 
 @Controller("media")
 export class MediaController {
@@ -10,8 +12,8 @@ export class MediaController {
   ) { }
 
   @Post('')
-  async addSong(payload: AddSongDTO) {
-    return this.mediaService.addSong(payload);
+  async addSong(@Body() payload: AddSongDTO, @GetUser() user: User) {
+    return this.mediaService.addMedia(payload, user);
   }
 
   @Get('/:media_id')

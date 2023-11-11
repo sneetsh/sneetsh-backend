@@ -11,11 +11,11 @@ export class Media extends BaseEntity {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   cover: string;
 
   @Column()
-  url: string;
+  file: string;
 
   @Column()
   label: string;
@@ -23,14 +23,32 @@ export class Media extends BaseEntity {
   @Column()
   genre: string;
 
+  @Column('simple-array', { default: '' })
+  tags: string[]
+
+  @Column()
+  duration: string;
+
+  @Column('double precision', { default: 0 })
+  favorite_count: string;
+
+  @Column('double precision', { default: 0 })
+  download_count: string;
+
   @Column({ type: 'enum', enum: MEDIA_TYPE, nullable: true })
   type: string;
 
   @Column({ nullable: true })
   album: string;
 
+  @Column('boolean', { default: false, select: false })
+  status: boolean;
+
   @Column({ nullable: true })
   description: string;
+
+  @Column('simple-array', { nullable: true })
+  feature_refs: string[];
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -52,7 +70,7 @@ export class Media extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.media, { cascade: true })
   @JoinColumn({ name: 'user_id' })
-  user: User[];
+  user: User;
 
   @ManyToMany(() => User, (user) => user.featured)
   features: User[];

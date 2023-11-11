@@ -147,6 +147,15 @@ export const sentenceCase = (value) => {
   return wordArr.map((value) => capitalizeFirstLetter(value)).join(" ");
 };
 
+export const getFileData = (file: Express.Multer.File) => {
+  const originalname = file.originalname;
+  const extStartPoint = originalname.lastIndexOf(".") - 1;
+  const ext = originalname.slice((extStartPoint >>> 0) + 2);
+  const filename = originalname.slice(0, extStartPoint + 1);
+
+  return { ext, filename }
+}
+
 export {
   getMoment,
   validatePublicKey,
