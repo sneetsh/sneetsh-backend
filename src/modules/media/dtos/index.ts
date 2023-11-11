@@ -31,7 +31,7 @@ export class AddSongDTO {
 
     @IsIn(Object.values(MEDIA_TYPE))
     @Transform(({ value }) => value?.toLowerCase())
-    media_type: string;
+    type: string;
 
     @IsOptional()
     @IsString()

@@ -4,8 +4,10 @@ import { AddSongDTO } from "../dtos";
 import { PaginationDTO } from "src/common/dto";
 import { GetUser } from "src/common/decorators";
 import { User } from "src/modules/user/entities/user.entity";
+import { UserAuthGuard } from "src/modules/authentication/guards/user.guard";
 
 @Controller("media")
+@UseGuards(UserAuthGuard)
 export class MediaController {
   constructor(
     private readonly mediaService: MediaService,
