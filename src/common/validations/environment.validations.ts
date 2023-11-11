@@ -44,7 +44,7 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
-  CLOUDINARY_CLOUD_NAME: string;
+  CLOUDINARY_API_NAME: string;
 
   @IsString()
   @IsNotEmpty()
