@@ -20,8 +20,6 @@ export class MediaService {
   async addMedia(payload: AddSongDTO, user: User) {
     const { features, ...newSongPayload } = payload;
 
-    console.log('NEW SONG PAYLOAD: ', newSongPayload);
-
     let feature_refs = [];
     let feats = [];
     const media = this.mediaRepository.create(newSongPayload);
@@ -35,8 +33,6 @@ export class MediaService {
         const artist = await this.userRepository.findOneBy({ id: feature });
         feats.push(artist);
         feature_refs.push(artist.username);
-
-        console.log('ARTIST: ', feats)
       } else {
         feature_refs.push(feature);
       }
