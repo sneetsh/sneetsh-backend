@@ -26,7 +26,7 @@ export class UserSignupDto {
     phone: string;
 
     @Transform(({ value }) => value.toLowerCase())
-    @IsIn(Object.keys(GENDER))
+    @IsIn(Object.values(GENDER))
     gender: string
 
     @IsEmail()
