@@ -25,7 +25,7 @@ export class AuthService {
   ) { }
 
   async signup(payload: UserSignupDto) {
-    const { email, phone, password, name, username, account_type, state_of_origin } = payload;
+    const { email, phone, password, name, username, account_type, state_of_origin, gender } = payload;
 
     const user = await this.userRepository.createQueryBuilder('user').
       where('user.email = :email OR user.phone = :phone', { email, phone })
@@ -36,14 +36,14 @@ export class AuthService {
 
     let passwordHash = await hash(password);
     let newUser = await this.userRepository.save({
-      email, phone, password: passwordHash, name, username, account_type, state_of_origin
+      email, phone, password: passwordHash, name, username, account_type, state_of_origin, gender
     });
 
     const token = generateRandomNumbers(4);
     const tokenPayload = {
       token,
       type: TOKEN_TYPES.ACCOUNT_ACTIVATION,
-      user_id: newUser.id,
+      identifier: newUser.id,
       expire_in: getMoment().add(24, "h").format(),
     };
     await this.tokenRepository.save(tokenPayload);
@@ -120,7 +120,7 @@ export class AuthService {
     const tokenPayload = {
       token,
       type: TOKEN_TYPES.ACCOUNT_ACTIVATION,
-      user_id: savedUser.id,
+      identifier: savedUser.id,
       expire_in: getMoment().add(24, "h").format(),
     };
     await this.tokenRepository.save(tokenPayload);
