@@ -17,19 +17,19 @@ import { UploadModule } from './modules/upload/upload.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-    isGlobal: true,
-    ignoreEnvFile: false,
-    validate,
-      load: [authConfig, cloudinaryConfig, dbConfig]
+      isGlobal: true,
+      ignoreEnvFile: false,
+      validate,
+      load: [authConfig, cloudinaryConfig, dbConfig],
     }),
     DatabaseModule,
     AuthenticationModule,
     MediaModule,
     UserModule,
     RoleManagementModule,
-    UploadModule
+    UploadModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

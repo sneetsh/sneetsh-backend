@@ -9,12 +9,12 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 
 import fileFilterOptions from './helpers/filesInterceptor';
 import { UploadService } from './providers/upload.service';
-import { SuccessResponse } from 'src/common/helpers';
 import { Base64FilesDTO } from './validators';
+import { SuccessResponse } from '../../common/helpers';
 
 @Controller('upload')
 export class UploadsController {
-  constructor(private uploadService: UploadService) { }
+  constructor(private uploadService: UploadService) {}
 
   @Post()
   @UseInterceptors(FilesInterceptor('files', 10, fileFilterOptions))
@@ -25,12 +25,9 @@ export class UploadsController {
   }
 
   @Post('/base64')
-  async uploadBase64(
-    @Body() payload: Base64FilesDTO,
-  ): Promise<any> {
-    const fileLinks = await this.uploadService.handleMultipleBase64Uploads(
-      payload,
-    );
+  async uploadBase64(@Body() payload: Base64FilesDTO): Promise<any> {
+    const fileLinks =
+      await this.uploadService.handleMultipleBase64Uploads(payload);
 
     return new SuccessResponse('File(s) uploaded successfully', fileLinks);
   }

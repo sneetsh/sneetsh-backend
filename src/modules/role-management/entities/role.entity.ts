@@ -10,20 +10,20 @@ import {
   BeforeInsert,
   Index,
   BeforeUpdate,
-} from "typeorm";
+} from 'typeorm';
 
-import { User } from "../../user/entities/user.entity";
-import { Permission } from "./permission.entity";
-import { toTsVector } from "src/common/utils";
+import { User } from '../../user/entities/user.entity';
+import { Permission } from './permission.entity';
+import { toTsVector } from '../../../common/utils';
 
 export enum ActiveStatusEnum {
   INACTIVE = 'inactive',
-  ACTIVE = 'active'
+  ACTIVE = 'active',
 }
 
 @Entity()
 export class Role extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false })
@@ -41,10 +41,10 @@ export class Role extends BaseEntity {
   description_token: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     nullable: false,
     enum: ActiveStatusEnum,
-    default: "active",
+    default: 'active',
   })
   status: string;
 
@@ -52,35 +52,35 @@ export class Role extends BaseEntity {
   member_count: number;
 
   @CreateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP(6)",
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at: Date;
 
   @UpdateDateColumn({
     nullable: true,
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP(6)",
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
   updated_at: Date;
 
-  @ManyToMany((user) => User, (user) => user.roles, { onDelete: "CASCADE" })
+  @ManyToMany((user) => User, (user) => user.roles, { onDelete: 'CASCADE' })
   users: User[];
 
   @ManyToMany(() => Permission, (permission) => permission.roles, {
     eager: true,
-    cascade: ['insert']
+    cascade: ['insert'],
   })
   @JoinTable({
-    name: "roles_permission",
+    name: 'roles_permission',
     joinColumn: {
       name: 'role_id',
-      referencedColumnName: "id"
+      referencedColumnName: 'id',
     },
     inverseJoinColumn: {
       name: 'permission_id',
-      referencedColumnName: "id"
-    }
+      referencedColumnName: 'id',
+    },
   })
   permissions: Permission[];
 
@@ -89,7 +89,7 @@ export class Role extends BaseEntity {
   async setTsVector() {
     const [descriptionToken, nameToken] = await Promise.all([
       await toTsVector(this.description),
-      await toTsVector(this.name)
+      await toTsVector(this.name),
     ]);
 
     this.description_token = descriptionToken;
@@ -97,6 +97,5 @@ export class Role extends BaseEntity {
   }
 
   @BeforeUpdate()
-  async setUpdatedTsVector() {
-  }
+  async setUpdatedTsVector() {}
 }
