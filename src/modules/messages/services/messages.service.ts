@@ -3,7 +3,9 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
+import { Not } from 'typeorm';
 import {
   ConversationStatus,
   ConversationType,
@@ -13,8 +15,9 @@ import { User } from '../../user/entities/user.entity';
 import { ConversationRepository } from '../repositories/conversations.repository';
 import { ConversationParticipantRepository } from '../repositories/conversation-participants.repository';
 import { MessageRepository } from '../repositories/messages.repository';
-import { NewMessageDTO } from '../dtos/new-message.dto';
 import { UserRepository } from '../../user/repositories/user.repository';
+import { MessageRequestResponseDTO } from '../dtos/request-response.dto';
+import { NewMessageDTO } from '../dtos/new-message.dto';
 
 @Injectable()
 export class MessagesService {
@@ -111,6 +114,44 @@ export class MessagesService {
       });
     } catch (error) {
       if (error instanceof ForbiddenException) {
+        throw error;
+      } else {
+        this.logger.error(error);
+        throw new InternalServerErrorException(this.FAILURE_MESSAGE);
+      }
+    }
+  }
+
+  async processRequest(
+    id: string,
+    requestResponseDTO: MessageRequestResponseDTO,
+    user: User,
+  ) {
+    try {
+      const conversation = await this.conversationRepository.findOne({
+        where: {
+          id,
+          recipient_id: user.id,
+          status: Not(ConversationStatus.ACCEPTED),
+          convo_type: ConversationType.DIRECT_MESSAGE,
+        },
+      });
+      if (!conversation) {
+        throw new NotFoundException('Message request not found');
+      }
+
+      switch (requestResponseDTO.status) {
+        case ConversationStatus.ACCEPTED:
+          conversation.status = requestResponseDTO.status;
+          await this.convoParticipantRepo.saveParticipant(user, conversation);
+          break;
+        case ConversationStatus.REJECTED:
+          conversation.status = requestResponseDTO.status;
+          break;
+      }
+      await conversation.save();
+    } catch (error) {
+      if (error instanceof NotFoundException) {
         throw error;
       } else {
         this.logger.error(error);
