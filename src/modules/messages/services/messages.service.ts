@@ -30,6 +30,13 @@ export class MessagesService {
 
   async create(newMessageDTO: NewMessageDTO, user: User) {
     try {
+      // * should be removed if chats can be used for personal notes
+      if (newMessageDTO.recipient === user.id) {
+        throw new ForbiddenException(
+          'You cannot start a conversation with yourself',
+        );
+      }
+
       let conversation = await this.conversationRepository.findOne({
         where: [
           {
