@@ -15,6 +15,7 @@ import { UserController } from './controllers/user.controller';
 import { EmailService } from '../../common/services/email.service';
 import { User } from './entities/user.entity';
 import { UserService } from './services/user.service';
+import { UserRepository } from './repositories/user.repository';
 
 @Module({
   imports: [
@@ -26,8 +27,8 @@ import { UserService } from './services/user.service';
     }),
     TypeOrmModule.forFeature([Role, Permission, User, Token]),
   ],
-  exports: [],
+  exports: [UserRepository],
   controllers: [AdminController, UserController],
-  providers: [AuthService, UserService, EmailService],
+  providers: [UserRepository, AuthService, UserService, EmailService],
 })
 export class UserModule {}
