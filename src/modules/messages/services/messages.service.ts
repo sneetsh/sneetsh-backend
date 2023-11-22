@@ -7,6 +7,7 @@ import {
 import {
   ConversationStatus,
   ConversationType,
+  Conversations,
 } from '../entities/conversations.entity';
 import { User } from '../../user/entities/user.entity';
 import { ConversationRepository } from '../repositories/conversations.repository';
@@ -60,6 +61,44 @@ export class MessagesService {
         text: newMessageDTO.text,
         conversation,
         user,
+      });
+    } catch (error) {
+      if (error instanceof ForbiddenException) {
+        throw error;
+      } else {
+        this.logger.error(error);
+        throw new InternalServerErrorException(this.FAILURE_MESSAGE);
+      }
+    }
+  }
+
+  async getRequests(user: User): Promise<Partial<Conversations>[]> {
+    try {
+      return await this.conversationRepository.find({
+        where: {
+          recipient_id: user.id,
+          status: ConversationStatus.REQUESTED,
+        },
+        relations: {
+          user: true,
+          messages: true,
+        },
+        select: {
+          id: true,
+          convo_type: true,
+          created_at: true,
+          user: {
+            id: true,
+            username: true,
+            name: true,
+          },
+          messages: {
+            text: true,
+          },
+        },
+        order: {
+          created_at: 'DESC',
+        },
       });
     } catch (error) {
       if (error instanceof ForbiddenException) {

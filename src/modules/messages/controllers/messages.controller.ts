@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -21,5 +22,10 @@ export class MessagesController {
   @HttpCode(HttpStatus.OK)
   async create(@Body() newMessageDTO: NewMessageDTO, @GetUser() user: User) {
     return this.messagesService.create(newMessageDTO, user);
+  }
+
+  @Get('requests')
+  async requests(@GetUser() user: User) {
+    return this.messagesService.getRequests(user);
   }
 }
