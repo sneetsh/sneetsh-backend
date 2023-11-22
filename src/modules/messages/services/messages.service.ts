@@ -32,9 +32,11 @@ export class MessagesService {
     try {
       let conversation = await this.conversationRepository.findOne({
         where: [
-          { user_id: user.id },
-          { user_id: newMessageDTO.recipient },
-          { convo_type: ConversationType.DIRECT_MESSAGE },
+          {
+            user_id: user.id,
+            recipient_id: newMessageDTO.recipient,
+            convo_type: ConversationType.DIRECT_MESSAGE,
+          },
         ],
       });
       if (conversation) {
