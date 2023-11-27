@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -18,7 +19,7 @@ import { UserRepository } from '../../user/repositories/user.repository';
 import { InboxInterface } from '../interfaces/conversations.interface';
 import { MessageInterface } from '../interfaces/messages.interface';
 import { MessageRequestResponseDTO } from '../dtos/request-response.dto';
-import { NewMessageDTO } from '../dtos/new-message.dto';
+import { MessageRequestDTO, NewMessageDTO } from '../dtos/new-message.dto';
 
 @Injectable()
 export class MessagesService {
@@ -32,23 +33,21 @@ export class MessagesService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async create(newMessageDTO: NewMessageDTO, user: User) {
+  async create(messageRequestDTO: MessageRequestDTO, user: User) {
     try {
       // * should be removed if chats can be used for personal notes
-      if (newMessageDTO.recipient === user.id) {
+      if (messageRequestDTO.recipient === user.id) {
         throw new ForbiddenException(
           'You cannot start a conversation with yourself',
         );
       }
 
       let conversation = await this.conversationRepository.findOne({
-        where: [
-          {
-            user_id: user.id,
-            recipient_id: newMessageDTO.recipient,
-            convo_type: ConversationType.DIRECT_MESSAGE,
-          },
-        ],
+        where: {
+          user_id: user.id,
+          recipient_id: messageRequestDTO.recipient,
+          convo_type: ConversationType.DIRECT_MESSAGE,
+        },
       });
       if (conversation) {
         switch (conversation.status) {
@@ -61,7 +60,7 @@ export class MessagesService {
         }
       } else {
         const recipient = await this.userRepository.findOneBy({
-          id: newMessageDTO.recipient,
+          id: messageRequestDTO.recipient,
         });
         conversation = await this.conversationRepository.saveConversation(
           user,
@@ -71,7 +70,7 @@ export class MessagesService {
       }
 
       await this.messageRepository.saveMessage({
-        text: newMessageDTO.text,
+        text: messageRequestDTO.text,
         conversation,
         user,
       });
@@ -147,6 +146,40 @@ export class MessagesService {
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(this.FAILURE_MESSAGE);
+    }
+  }
+
+  async saveMessage(
+    id: string,
+    newMessageDTO: NewMessageDTO,
+    user: User,
+  ): Promise<MessageInterface[]> {
+    try {
+      const conversation = await this.conversationRepository.findOne({
+        where: {
+          id,
+          status: ConversationStatus.ACCEPTED,
+        },
+      });
+
+      if (!conversation) {
+        throw new BadRequestException('Conversation does not exist');
+      }
+
+      await this.messageRepository.saveMessage({
+        text: newMessageDTO.text,
+        conversation,
+        user,
+      });
+
+      return await this.messageRepository.getMessages(id, user.id);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      } else {
+        this.logger.error(error);
+        throw new InternalServerErrorException(this.FAILURE_MESSAGE);
+      }
     }
   }
 }

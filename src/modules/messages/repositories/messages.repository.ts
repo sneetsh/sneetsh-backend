@@ -46,7 +46,8 @@ export class MessageRepository extends Repository<Messages> {
          user_id
         FROM conversation_participants
         WHERE conversation_id = $1
-      );
+      )
+      ORDER BY created_at ASC;
       `,
         [conversation_id, user_id],
       );

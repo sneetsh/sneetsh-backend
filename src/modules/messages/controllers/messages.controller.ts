@@ -13,7 +13,7 @@ import {
 import { UserAuthGuard } from '../../authentication/guards/user.guard';
 import { User } from '../../user/entities/user.entity';
 import { MessagesService } from '../services/messages.service';
-import { NewMessageDTO } from '../dtos/new-message.dto';
+import { MessageRequestDTO, NewMessageDTO } from '../dtos/new-message.dto';
 import { GetUser } from '../../../common/decorators';
 import { MessageRequestResponseDTO } from '../dtos/request-response.dto';
 
@@ -24,8 +24,11 @@ export class MessagesController {
 
   @Post('requests')
   @HttpCode(HttpStatus.OK)
-  async create(@Body() newMessageDTO: NewMessageDTO, @GetUser() user: User) {
-    return this.messagesService.create(newMessageDTO, user);
+  async create(
+    @Body() messageRequestDTO: MessageRequestDTO,
+    @GetUser() user: User,
+  ) {
+    return this.messagesService.create(messageRequestDTO, user);
   }
 
   @Get('requests')
@@ -49,6 +52,15 @@ export class MessagesController {
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string, @GetUser() user: User) {
-    return this.messagesService.findAll(user);
+    return this.messagesService.findOne(id, user);
+  }
+
+  @Post(':id')
+  async saveMessage(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() newMessageDTO: NewMessageDTO,
+    @GetUser() user: User,
+  ) {
+    return this.messagesService.saveMessage(id, newMessageDTO, user);
   }
 }
