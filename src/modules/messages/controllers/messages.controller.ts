@@ -47,12 +47,12 @@ export class MessagesController {
 
   @Get()
   async findAll(@GetUser() user: User) {
-    return this.messagesService.findAll(user);
+    return this.messagesService.findAll(user.id);
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string, @GetUser() user: User) {
-    return this.messagesService.findOne(id, user);
+    return this.messagesService.findOne(id, user.id);
   }
 
   @Post(':id')
@@ -61,6 +61,6 @@ export class MessagesController {
     @Body() newMessageDTO: NewMessageDTO,
     @GetUser() user: User,
   ) {
-    return this.messagesService.saveMessage(id, newMessageDTO, user);
+    return this.messagesService.saveMessage(id, newMessageDTO.text, user);
   }
 }

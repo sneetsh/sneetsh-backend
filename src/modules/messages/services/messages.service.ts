@@ -131,18 +131,18 @@ export class MessagesService {
     }
   }
 
-  async findAll(user: User): Promise<InboxInterface[]> {
+  async findAll(userId: string): Promise<InboxInterface[]> {
     try {
-      return await this.conversationRepository.inbox(user.id);
+      return await this.conversationRepository.inbox(userId);
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(this.FAILURE_MESSAGE);
     }
   }
 
-  async findOne(id: string, user: User): Promise<MessageInterface[]> {
+  async findOne(id: string, userId: string): Promise<MessageInterface[]> {
     try {
-      return await this.messageRepository.getMessages(id, user.id);
+      return await this.messageRepository.getMessages(id, userId);
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(this.FAILURE_MESSAGE);
@@ -151,7 +151,7 @@ export class MessagesService {
 
   async saveMessage(
     id: string,
-    newMessageDTO: NewMessageDTO,
+    text: string,
     user: User,
   ): Promise<MessageInterface[]> {
     try {
@@ -167,7 +167,7 @@ export class MessagesService {
       }
 
       await this.messageRepository.saveMessage({
-        text: newMessageDTO.text,
+        text,
         conversation,
         user,
       });
