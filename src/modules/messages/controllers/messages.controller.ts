@@ -33,7 +33,7 @@ export class MessagesController {
 
   @Get('requests')
   async requests(@GetUser() user: User) {
-    return this.messagesService.getRequests(user);
+    return this.messagesService.getRequests(user.id);
   }
 
   @Put('requests/:id')

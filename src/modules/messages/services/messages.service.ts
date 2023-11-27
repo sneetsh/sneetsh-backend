@@ -84,9 +84,9 @@ export class MessagesService {
     }
   }
 
-  async getRequests(user: User): Promise<InboxInterface[]> {
+  async getRequests(userId: string): Promise<InboxInterface[]> {
     try {
-      return await this.conversationRepository.messageRequests(user.id);
+      return await this.conversationRepository.messageRequests(userId);
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(this.FAILURE_MESSAGE);
