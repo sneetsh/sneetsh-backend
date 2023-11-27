@@ -41,4 +41,14 @@ export class MessagesController {
   ) {
     return this.messagesService.processRequest(id, requestResponseDTO, user);
   }
+
+  @Get()
+  async findAll(@GetUser() user: User) {
+    return this.messagesService.findAll(user);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id', ParseUUIDPipe) id: string, @GetUser() user: User) {
+    return this.messagesService.findAll(user);
+  }
 }

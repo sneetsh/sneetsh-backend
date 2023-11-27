@@ -9,13 +9,14 @@ import { Not } from 'typeorm';
 import {
   ConversationStatus,
   ConversationType,
-  Conversations,
 } from '../entities/conversations.entity';
 import { User } from '../../user/entities/user.entity';
 import { ConversationRepository } from '../repositories/conversations.repository';
 import { ConversationParticipantRepository } from '../repositories/conversation-participants.repository';
 import { MessageRepository } from '../repositories/messages.repository';
 import { UserRepository } from '../../user/repositories/user.repository';
+import { InboxInterface } from '../interfaces/conversations.interface';
+import { MessageInterface } from '../interfaces/messages.interface';
 import { MessageRequestResponseDTO } from '../dtos/request-response.dto';
 import { NewMessageDTO } from '../dtos/new-message.dto';
 
@@ -84,41 +85,12 @@ export class MessagesService {
     }
   }
 
-  async getRequests(user: User): Promise<Partial<Conversations>[]> {
+  async getRequests(user: User): Promise<InboxInterface[]> {
     try {
-      return await this.conversationRepository.find({
-        where: {
-          recipient_id: user.id,
-          status: ConversationStatus.REQUESTED,
-        },
-        relations: {
-          user: true,
-          messages: true,
-        },
-        select: {
-          id: true,
-          convo_type: true,
-          created_at: true,
-          user: {
-            id: true,
-            username: true,
-            name: true,
-          },
-          messages: {
-            text: true,
-          },
-        },
-        order: {
-          created_at: 'DESC',
-        },
-      });
+      return await this.conversationRepository.messageRequests(user.id);
     } catch (error) {
-      if (error instanceof ForbiddenException) {
-        throw error;
-      } else {
-        this.logger.error(error);
-        throw new InternalServerErrorException(this.FAILURE_MESSAGE);
-      }
+      this.logger.error(error);
+      throw new InternalServerErrorException(this.FAILURE_MESSAGE);
     }
   }
 
@@ -157,6 +129,24 @@ export class MessagesService {
         this.logger.error(error);
         throw new InternalServerErrorException(this.FAILURE_MESSAGE);
       }
+    }
+  }
+
+  async findAll(user: User): Promise<InboxInterface[]> {
+    try {
+      return await this.conversationRepository.inbox(user.id);
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(this.FAILURE_MESSAGE);
+    }
+  }
+
+  async findOne(id: string, user: User): Promise<MessageInterface[]> {
+    try {
+      return await this.messageRepository.getMessages(id, user.id);
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(this.FAILURE_MESSAGE);
     }
   }
 }
