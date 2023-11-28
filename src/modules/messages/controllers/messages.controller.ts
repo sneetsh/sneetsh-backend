@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UserAuthGuard } from '../../authentication/guards/user.guard';
@@ -32,8 +33,8 @@ export class MessagesController {
   }
 
   @Get('requests')
-  async requests(@GetUser() user: User) {
-    return this.messagesService.getRequests(user.id);
+  async requests(@GetUser() user: User, @Req() request) {
+    return this.messagesService.getRequests(user.id, request.pagination);
   }
 
   @Put('requests/:id')
@@ -46,13 +47,18 @@ export class MessagesController {
   }
 
   @Get()
-  async findAll(@GetUser() user: User) {
-    return this.messagesService.findAll(user.id);
+  async findAll(@GetUser() user: User, @Req() request) {
+    return this.messagesService.findAll(user.id, request.pagination);
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string, @GetUser() user: User) {
-    return this.messagesService.findOne(id, user.id);
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: User,
+    @Req() request,
+  ) {
+    console.log(request.pagination);
+    return this.messagesService.findOne(id, user.id, request.pagination);
   }
 
   @Post(':id')

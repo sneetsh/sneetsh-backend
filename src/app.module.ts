@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { PaginationMiddleware } from './common/middlewares/pagination.middleware';
 import { validate } from './common/validations';
 
 import authConfig from './config/auth.config';
@@ -34,4 +35,10 @@ import { UploadModule } from './modules/upload/upload.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    return consumer
+      .apply(PaginationMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.GET });
+  }
+}

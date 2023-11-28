@@ -7,6 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Not } from 'typeorm';
+import { Pagination } from '../../../common/interfaces/pagination.interface';
 import {
   ConversationStatus,
   ConversationType,
@@ -19,7 +20,7 @@ import { UserRepository } from '../../user/repositories/user.repository';
 import { InboxInterface } from '../interfaces/conversations.interface';
 import { MessageInterface } from '../interfaces/messages.interface';
 import { MessageRequestResponseDTO } from '../dtos/request-response.dto';
-import { MessageRequestDTO, NewMessageDTO } from '../dtos/new-message.dto';
+import { MessageRequestDTO } from '../dtos/new-message.dto';
 
 @Injectable()
 export class MessagesService {
@@ -84,9 +85,15 @@ export class MessagesService {
     }
   }
 
-  async getRequests(userId: string): Promise<InboxInterface[]> {
+  async getRequests(
+    userId: string,
+    pagination: Pagination,
+  ): Promise<InboxInterface[]> {
     try {
-      return await this.conversationRepository.messageRequests(userId);
+      return await this.conversationRepository.messageRequests(
+        userId,
+        pagination,
+      );
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(this.FAILURE_MESSAGE);
@@ -131,18 +138,25 @@ export class MessagesService {
     }
   }
 
-  async findAll(userId: string): Promise<InboxInterface[]> {
+  async findAll(
+    userId: string,
+    pagination: Pagination,
+  ): Promise<InboxInterface[]> {
     try {
-      return await this.conversationRepository.inbox(userId);
+      return await this.conversationRepository.inbox(userId, pagination);
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(this.FAILURE_MESSAGE);
     }
   }
 
-  async findOne(id: string, userId: string): Promise<MessageInterface[]> {
+  async findOne(
+    id: string,
+    userId: string,
+    pagination: Pagination,
+  ): Promise<MessageInterface[]> {
     try {
-      return await this.messageRepository.getMessages(id, userId);
+      return await this.messageRepository.getMessages(id, userId, pagination);
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(this.FAILURE_MESSAGE);
@@ -172,7 +186,10 @@ export class MessagesService {
         user,
       });
 
-      return await this.messageRepository.getMessages(id, user.id);
+      return await this.messageRepository.getMessages(id, user.id, {
+        skip: 0,
+        take: 50,
+      });
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;

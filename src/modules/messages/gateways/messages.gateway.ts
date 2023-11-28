@@ -5,9 +5,10 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { MessagesService } from '../services/messages.service';
+import { getPagination } from '../../../common/helpers/websocket.helper';
 import { InboxInterface } from '../interfaces/conversations.interface';
 import { MessageInterface } from '../interfaces/messages.interface';
+import { MessagesService } from '../services/messages.service';
 
 @WebSocketGateway({
   cors: {
@@ -22,22 +23,41 @@ export class MessagesGateway {
 
   @SubscribeMessage('inbox')
   async inbox(
-    @MessageBody() data: { userId: string },
+    @MessageBody()
+    data: {
+      userId: string;
+      pagination?: { page: string; limit: string };
+    },
   ): Promise<InboxInterface[]> {
-    return this.messagesService.findAll(data.userId);
+    const { userId, pagination } = data;
+    const paginate = getPagination(pagination?.page, pagination?.limit);
+    return this.messagesService.findAll(userId, paginate);
   }
 
   @SubscribeMessage('thread')
   async thread(
-    @MessageBody() data: { id: string; userId: string },
+    @MessageBody()
+    data: {
+      id: string;
+      userId: string;
+      pagination?: { page: string; limit: string };
+    },
   ): Promise<MessageInterface[]> {
-    return this.messagesService.findOne(data.id, data.userId);
+    const { id, userId, pagination } = data;
+    const paginate = getPagination(pagination?.page, pagination?.limit);
+    return this.messagesService.findOne(id, userId, paginate);
   }
 
   @SubscribeMessage('messageRequests')
   async messageRequests(
-    @MessageBody() data: { userId: string },
+    @MessageBody()
+    data: {
+      userId: string;
+      pagination?: { page: string; limit: string };
+    },
   ): Promise<InboxInterface[]> {
-    return this.messagesService.getRequests(data.userId);
+    const { userId, pagination } = data;
+    const paginate = getPagination(pagination?.page, pagination?.limit);
+    return this.messagesService.getRequests(userId, paginate);
   }
 }

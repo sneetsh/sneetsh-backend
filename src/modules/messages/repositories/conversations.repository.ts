@@ -55,6 +55,7 @@ export class ConversationRepository extends Repository<Conversations> {
 
   async messageRequests(
     user_id: string,
+    pagination: { skip: number; take: number },
     status = ConversationStatus.REQUESTED,
   ): Promise<InboxInterface[]> {
     try {
@@ -79,16 +80,21 @@ export class ConversationRepository extends Repository<Conversations> {
         conv.recipient_id = $1
         AND status = $2
         ORDER BY
-        created_at DESC;
+        created_at DESC
+        LIMIT $3
+        OFFSET $4;
       `,
-        [user_id, status],
+        [user_id, status, pagination.take, pagination.skip],
       );
     } catch (error) {
       this.logger.error(error, error.message);
     }
   }
 
-  async inbox(user_id: string): Promise<InboxInterface[]> {
+  async inbox(
+    user_id: string,
+    pagination: { skip: number; take: number },
+  ): Promise<InboxInterface[]> {
     try {
       return await this.query(
         `
@@ -113,9 +119,16 @@ export class ConversationRepository extends Repository<Conversations> {
         CP.user_id = $1
         AND status = $2
         ORDER BY
-        created_at DESC;
+        created_at DESC
+        LIMIT $3
+        OFFSET $4;
       `,
-        [user_id, ConversationStatus.ACCEPTED],
+        [
+          user_id,
+          ConversationStatus.ACCEPTED,
+          pagination.take,
+          pagination.skip,
+        ],
       );
     } catch (error) {
       this.logger.error(error, error.message);

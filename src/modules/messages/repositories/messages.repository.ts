@@ -31,6 +31,7 @@ export class MessageRepository extends Repository<Messages> {
   async getMessages(
     conversation_id: string,
     user_id: string,
+    pagination: { skip: number; take: number },
   ): Promise<MessageInterface[]> {
     try {
       return await this.query(
@@ -47,9 +48,11 @@ export class MessageRepository extends Repository<Messages> {
         FROM conversation_participants
         WHERE conversation_id = $1
       )
-      ORDER BY created_at ASC;
+      ORDER BY created_at ASC
+      LIMIT $3
+      OFFSET $4;
       `,
-        [conversation_id, user_id],
+        [conversation_id, user_id, pagination.take, pagination.skip],
       );
     } catch (error) {
       this.logger.error(error, error.message);

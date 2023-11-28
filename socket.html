@@ -19,7 +19,7 @@
                 socket.emit('thread', { id: threadId, userId }, response =>
                     console.log('Thread:', response),);
 
-                socket.emit('messageRequests', { userId }, response =>
+                socket.emit('messageRequests', { userId, pagination: { page: 0, limit: 5 } }, response =>
                     console.log('Requests:', response),);
             });
             socket.on('events', function (data) {
