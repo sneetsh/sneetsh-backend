@@ -40,11 +40,22 @@ export class MessagesGateway {
     data: {
       id: string;
       userId: string;
+      text: string;
       pagination?: { page: string; limit: string };
     },
   ): Promise<MessageInterface[]> {
-    const { id, userId, pagination } = data;
+    const { id, userId, text, pagination } = data;
     const paginate = getPagination(pagination?.page, pagination?.limit);
+
+    if (text) {
+      return this.messagesService.saveWebsocketMessage(
+        id,
+        text,
+        userId,
+        paginate,
+      );
+    }
+
     return this.messagesService.findOne(id, userId, paginate);
   }
 

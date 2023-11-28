@@ -167,6 +167,7 @@ export class MessagesService {
     id: string,
     text: string,
     user: User,
+    pagination: Pagination,
   ): Promise<MessageInterface[]> {
     try {
       const conversation = await this.conversationRepository.findOne({
@@ -186,10 +187,30 @@ export class MessagesService {
         user,
       });
 
-      return await this.messageRepository.getMessages(id, user.id, {
-        skip: 0,
-        take: 50,
-      });
+      return await this.messageRepository.getMessages(id, user.id, pagination);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      } else {
+        this.logger.error(error);
+        throw new InternalServerErrorException(this.FAILURE_MESSAGE);
+      }
+    }
+  }
+
+  async saveWebsocketMessage(
+    id: string,
+    text: string,
+    userId: string,
+    pagination: Pagination,
+  ): Promise<MessageInterface[]> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) {
+        throw new ForbiddenException('User not found');
+      }
+
+      return await this.saveMessage(id, text, user, pagination);
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;

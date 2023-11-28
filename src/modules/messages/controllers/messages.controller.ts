@@ -57,7 +57,6 @@ export class MessagesController {
     @GetUser() user: User,
     @Req() request,
   ) {
-    console.log(request.pagination);
     return this.messagesService.findOne(id, user.id, request.pagination);
   }
 
@@ -66,7 +65,13 @@ export class MessagesController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() newMessageDTO: NewMessageDTO,
     @GetUser() user: User,
+    @Req() request,
   ) {
-    return this.messagesService.saveMessage(id, newMessageDTO.text, user);
+    return this.messagesService.saveMessage(
+      id,
+      newMessageDTO.text,
+      user,
+      request.pagination,
+    );
   }
 }

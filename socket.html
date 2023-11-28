@@ -13,12 +13,19 @@
             socket.on('connect', function () {
                 console.log('Connected');
 
+                // list of accepted message requests
                 socket.emit('inbox', { userId }, response =>
                     console.log('Inbox:', response),);
 
+                // message thread
                 socket.emit('thread', { id: threadId, userId }, response =>
                     console.log('Thread:', response),);
 
+                // send message in chat, specify pagination
+                socket.emit('thread', { id: threadId, userId, text: "Its's a wonderful world", pagination: { page: 0, limit: 50 } }, response =>
+                    console.log('Thread (send):', response),);
+
+                // list of pending message requests
                 socket.emit('messageRequests', { userId, pagination: { page: 0, limit: 5 } }, response =>
                     console.log('Requests:', response),);
             });
