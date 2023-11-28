@@ -3,10 +3,10 @@ import { Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Media } from '../entities/media.entity';
-import { PaginationDTO } from 'src/common/dto';
 import { AddSongDTO } from '../dtos';
-import { User } from 'src/modules/user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 import { isEmail, isUUID } from 'class-validator';
+import { PaginationDTO } from '../../../common/dto';
 
 @Injectable()
 export class MediaService {
@@ -15,16 +15,16 @@ export class MediaService {
     private readonly mediaRepository: Repository<Media>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async addMedia(payload: AddSongDTO, user: User) {
     const { features, ...newSongPayload } = payload;
 
-    let feature_refs = [];
-    let feats = [];
+    const feature_refs = [];
+    const feats = [];
     const media = this.mediaRepository.create(newSongPayload);
 
-    for (let feature of features) {
+    for (const feature of features) {
       if (isUUID(feature)) {
         const artist = await this.userRepository.findOneBy({ id: feature });
         feats.push(artist);
@@ -48,23 +48,28 @@ export class MediaService {
 
   async getSingleMedia(id: string) {
     const media = await this.mediaRepository.findOneBy({ id });
-    if (!media) throw new NotFoundException('Specified media content not found');
+    if (!media)
+      throw new NotFoundException('Specified media content not found');
 
     return media;
   }
 
   async getMedia(pagination: PaginationDTO, user: User) {
     const { page = 0, limit = 100, search } = pagination;
-    console.log('SEARCH: ', search)
+    console.log('SEARCH: ', search);
 
-    const query = this.mediaRepository.createQueryBuilder('media')
+    const query = this.mediaRepository
+      .createQueryBuilder('media')
       .where('media.user_id =:userId', { userId: user.id })
       .limit(+limit)
       .skip(+page)
-      .orderBy({ 'created_at': 'DESC' });
+      .orderBy({ created_at: 'DESC' });
 
     if (search)
-      query.andWhere('(media.title ILIKE :search OR media.label ILIKE :search OR media.album ILIKE :search OR media.description ILIKE :search)', { search: `%${search}%` })
+      query.andWhere(
+        '(media.title ILIKE :search OR media.label ILIKE :search OR media.album ILIKE :search OR media.description ILIKE :search)',
+        { search: `%${search}%` },
+      );
 
     const [results, total] = await query.getManyAndCount();
 
@@ -72,21 +77,25 @@ export class MediaService {
       total,
       page,
       limit,
-      results
-    }
+      results,
+    };
   }
 
   async getUserMedia(userId: string, pagination: PaginationDTO) {
     const { page = 0, limit = 100, search } = pagination;
 
-    const query = this.mediaRepository.createQueryBuilder('media')
+    const query = this.mediaRepository
+      .createQueryBuilder('media')
       .where('media.user_id =:userId', { userId })
       .limit(+limit)
       .skip(+page)
-      .orderBy({ 'created_at': 'DESC' });
+      .orderBy({ created_at: 'DESC' });
 
     if (search)
-      query.andWhere('(media.title ILIKE :search OR media.label ILIKE :search OR media.album ILIKE :search OR media.description ILIKE :search)', { search: `%${search}%` })
+      query.andWhere(
+        '(media.title ILIKE :search OR media.label ILIKE :search OR media.album ILIKE :search OR media.description ILIKE :search)',
+        { search: `%${search}%` },
+      );
 
     const [results, total] = await query.getManyAndCount();
 
@@ -94,11 +103,9 @@ export class MediaService {
       total,
       page,
       limit,
-      results
-    }
+      results,
+    };
   }
 
-  async getTrending(pagination: PaginationDTO) {
-
-  }
+  async getTrending(pagination: PaginationDTO) {}
 }

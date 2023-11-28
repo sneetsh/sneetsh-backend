@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as cloudinary from 'cloudinary';
-import { removeUnusedImage } from 'src/common/utils';
+import { removeUnusedImage } from '../../../common/utils';
 
 @Injectable()
 export class Cloudinary {

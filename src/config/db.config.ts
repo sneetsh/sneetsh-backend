@@ -1,42 +1,41 @@
 import * as path from 'path';
+import { registerAs } from '@nestjs/config';
+import { getEnv } from '../common/helpers/env.helper';
 
-import { registerAs } from "@nestjs/config";
-
-import { getEnv } from 'src/common/helpers/env.helper';
 const ENV = getEnv();
 
-export default registerAs("db", () => ({
+export default registerAs('db', () => ({
   test: {
-    type: "postgres",
+    type: 'postgres',
     url: ENV.DATABASE_URL_TEST,
     logging: false,
     ssl: false,
-    entities: [path.join(__dirname, "../", "**/*.entity.{ts,js}")],
+    entities: [path.join(__dirname, '../', '**/*.entity.{ts,js}')],
     synchronize: false,
     autoLoadEntities: true,
     keepConnectionAlive: true,
   },
   development: {
-    type: "postgres",
+    type: 'postgres',
     url: ENV.DATABASE_URL_DEV,
     logging: false,
     console: true,
     ssl: false,
-    entities: [path.join(__dirname, "../", "**/*.entity.{ts,js}")],
+    entities: [path.join(__dirname, '../', '**/*.entity.{ts,js}')],
     synchronize: false,
     autoLoadEntities: true,
     keepConnectionAlive: true,
   },
   production: {
-    type: "postgres",
+    type: 'postgres',
     url: ENV.DATABASE_URL_PROD,
     ssl: {
       rejectUnauthorized: false,
     },
     logging: true,
-    entities: [__dirname + "/../**/*.entity.{js,ts}"],
+    entities: [__dirname + '/../**/*.entity.{js,ts}'],
     synchronize: false,
     autoLoadEntities: true,
     keepConnectionAlive: true,
-  }
+  },
 }));

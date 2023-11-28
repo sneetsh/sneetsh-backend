@@ -1,7 +1,18 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-import { User } from 'src/modules/user/entities/user.entity';
-import { MEDIA_TYPE } from 'src/common/interfaces';
+import { User } from '../../user/entities/user.entity';
+import { MEDIA_TYPE } from '../../../common/interfaces';
 
 @Entity()
 export class Media extends BaseEntity {
@@ -24,7 +35,7 @@ export class Media extends BaseEntity {
   genre: string;
 
   @Column('simple-array', { default: '' })
-  tags: string[]
+  tags: string[];
 
   @Column()
   duration: string;
@@ -52,13 +63,13 @@ export class Media extends BaseEntity {
 
   @CreateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)'
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at: string;
 
   @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)'
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
   update_at: string;
 

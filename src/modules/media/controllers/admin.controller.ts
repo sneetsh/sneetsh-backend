@@ -1,10 +1,10 @@
-import { Controller, UseGuards } from "@nestjs/common";
+import { Controller, UseGuards } from '@nestjs/common';
 
-import { UserAuthGuard } from "src/modules/authentication/guards/user.guard";
-import { MediaService } from "../services/media.service";
+import { UserAuthGuard } from '../../authentication/guards/user.guard';
+import { MediaService } from '../services/media.service';
 
-@Controller("admin")
+@Controller('admin')
 @UseGuards(UserAuthGuard)
 export class AdminController {
-  constructor(private readonly mediaService: MediaService) { }
+  constructor(private readonly mediaService: MediaService) {}
 }

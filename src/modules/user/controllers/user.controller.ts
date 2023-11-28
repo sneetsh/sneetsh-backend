@@ -1,23 +1,23 @@
-import { Body, Controller, Get, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 
-import { UserService } from "../services/user.service";
-import { UserUpdateDto } from "../dtos";
-import { User } from "../entities/user.entity";
+import { UserService } from '../services/user.service';
+import { UserUpdateDto } from '../dtos';
+import { User } from '../entities/user.entity';
 
-import { UserAuthGuard } from "src/modules/authentication/guards/user.guard";
-import { GetUser } from "src/common/decorators";
+import { UserAuthGuard } from '../../authentication/guards/user.guard';
+import { GetUser } from '../../../common/decorators';
 
-@Controller("users")
+@Controller('users')
 @UseGuards(UserAuthGuard)
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
-  @Get("")
+  @Get('')
   async getUser(@GetUser() { id }: User) {
     return this.userService.getUser(id);
   }
 
-  @Put("")
+  @Put('')
   updateUser(@Body() body: UserUpdateDto, @GetUser() { id }: User) {
     return this.userService.update({ user_id: id, ...body });
   }

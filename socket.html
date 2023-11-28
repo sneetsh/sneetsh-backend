@@ -1,0 +1,46 @@
+<html>
+
+    <head>
+        <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+            integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+            crossorigin="anonymous"></script>
+        <script>
+            const socket = io('http://localhost:5001');
+
+            const userId = '2aa0fd39-89f2-4b6b-ac42-b09d869997dc'
+            const threadId = 'cfbe7f07-8fa6-4653-90bd-f9f9ebd4d8c8'
+
+            socket.on('connect', function () {
+                console.log('Connected');
+
+                // list of accepted message requests
+                socket.emit('inbox', { userId }, response =>
+                    console.log('Inbox:', response),);
+
+                // message thread
+                socket.emit('thread', { id: threadId, userId }, response =>
+                    console.log('Thread:', response),);
+
+                // send message in chat, specify pagination
+                socket.emit('thread', { id: threadId, userId, text: "Its's a wonderful world", pagination: { page: 0, limit: 50 } }, response =>
+                    console.log('Thread (send):', response),);
+
+                // list of pending message requests
+                socket.emit('messageRequests', { userId, pagination: { page: 0, limit: 5 } }, response =>
+                    console.log('Requests:', response),);
+            });
+            socket.on('events', function (data) {
+                console.log('event', data);
+            });
+            socket.on('exception', function (data) {
+                console.log('event', data);
+            });
+            socket.on('disconnect', function () {
+                console.log('Disconnected');
+            });
+        </script>
+    </head>
+
+    <body></body>
+
+</html>

@@ -1,18 +1,18 @@
-import { Global, Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { Global, Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { TypeOrmModule } from "@nestjs/typeorm";
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthController } from "./controller/auth.controller";
-import { JwtUserStrategy } from "./strategies/user.strategies";
-import { JwtRefreshStrategy } from "./strategies/refresh-token.strategies";
+import { AuthController } from './controller/auth.controller';
+import { JwtUserStrategy } from './strategies/user.strategies';
+import { JwtRefreshStrategy } from './strategies/refresh-token.strategies';
 
-import { AuthService } from "./service/auth.service";
-import { User } from "../user/entities/user.entity";
-import { Token } from "../user/entities/token.entity";
-import { EmailService } from "src/common/services/email.service";
-import { Role } from "../role-management/entities/role.entity";
+import { AuthService } from './service/auth.service';
+import { User } from '../user/entities/user.entity';
+import { Token } from '../user/entities/token.entity';
+import { Role } from '../role-management/entities/role.entity';
+import { EmailService } from '../../common/services/email.service';
 
 @Global()
 @Module({
@@ -20,14 +20,13 @@ import { Role } from "../role-management/entities/role.entity";
     HttpModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (config: ConfigService) => config.get("auth.jwt"),
+      useFactory: async (config: ConfigService) => config.get('auth.jwt'),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Token, User, Role])
+    TypeOrmModule.forFeature([Token, User, Role]),
   ],
   providers: [JwtUserStrategy, JwtRefreshStrategy, AuthService, EmailService],
   exports: [JwtModule, AuthService],
   controllers: [AuthController],
 })
-
-export class AuthenticationModule { }
+export class AuthenticationModule {}

@@ -10,11 +10,14 @@ import {
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 
-import { ACCOUNT_TYPE, GENDER } from 'src/common/interfaces';
-import { Media } from 'src/modules/media/entities/media.entity';
+import { Media } from '../../media/entities/media.entity';
+import { Conversations } from '../../messages/entities/conversations.entity';
+import { Messages } from '../../messages/entities/messages.entity';
+import { Exclude } from 'class-transformer';
+import { ACCOUNT_TYPE, GENDER } from '../../../common/interfaces';
 
 @Entity()
 export class User extends BaseEntity {
@@ -80,7 +83,8 @@ export class User extends BaseEntity {
   updated_at: string;
 
   @DeleteDateColumn({
-    nullable: true, select: false
+    nullable: true,
+    select: false,
   })
   deleted_at: string;
 
@@ -96,14 +100,22 @@ export class User extends BaseEntity {
     name: 'user_features',
     joinColumn: {
       name: 'user_id',
-      referencedColumnName: 'id'
+      referencedColumnName: 'id',
     },
     inverseJoinColumn: {
       name: 'media_id',
-      referencedColumnName: 'id'
-    }
+      referencedColumnName: 'id',
+    },
   })
   featured: Media[];
+
+  @Exclude()
+  @OneToMany(() => Conversations, (conversations) => conversations.user)
+  conversations: Conversations[];
+
+  @Exclude()
+  @OneToMany(() => Messages, (messages) => messages.user)
+  messages: Messages[];
 
   // ENTITY METHOD
   isSamePassword(password: string): Promise<boolean> {

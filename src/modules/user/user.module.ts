@@ -6,29 +6,29 @@ import { HttpModule } from '@nestjs/axios';
 
 import { AdminController } from './controllers/admin.controller';
 
-import { UserService } from 'src/modules/user/services/user.service';
 import { AuthService } from '../authentication/service/auth.service';
 
 import { Role } from '../role-management/entities/role.entity';
 import { Permission } from '../role-management/entities/permission.entity';
-import { User } from 'src/modules/user/entities/user.entity';
 import { Token } from './entities/token.entity';
-import { EmailService } from 'src/common/services/email.service';
 import { UserController } from './controllers/user.controller';
+import { EmailService } from '../../common/services/email.service';
+import { User } from './entities/user.entity';
+import { UserService } from './services/user.service';
+import { UserRepository } from './repositories/user.repository';
 
 @Module({
-    imports: [
-        HttpModule,
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (config: ConfigService) => config.get("auth.jwt"),
-            inject: [ConfigService],
-        }),
-        TypeOrmModule.forFeature([Role, Permission, User, Token]),
-    ],
-    exports: [],
-    controllers: [AdminController, UserController],
-    providers: [AuthService, UserService, EmailService],
+  imports: [
+    HttpModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => config.get('auth.jwt'),
+      inject: [ConfigService],
+    }),
+    TypeOrmModule.forFeature([Role, Permission, User, Token]),
+  ],
+  exports: [UserRepository],
+  controllers: [AdminController, UserController],
+  providers: [UserRepository, AuthService, UserService, EmailService],
 })
-
-export class UserModule { }
+export class UserModule {}

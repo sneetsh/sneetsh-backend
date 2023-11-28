@@ -1,21 +1,19 @@
+import { HttpException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Seeder } from 'nestjs-seeder';
+import { Repository } from 'typeorm';
 
-import { HttpException, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Seeder } from "nestjs-seeder";
-import { Repository } from "typeorm";
-
-import mediaContents from "./data";
-import { connectionSource } from "../../../typeorm.config";
-import { hash } from "src/common/utils";
-import { Media } from "../entities/media.entity";
+import mediaContents from './data';
+import { connectionSource } from '../../../typeorm.config';
+import { Media } from '../entities/media.entity';
+import { hash } from '../../../common/utils';
 
 @Injectable()
 export class DefaultMediaSeeder implements Seeder {
-
   constructor(
     @InjectRepository(Media)
-    private readonly mediaRepository: Repository<Media>
-  ) { }
+    private readonly mediaRepository: Repository<Media>,
+  ) {}
 
   async seed(): Promise<any> {
     const queryRunner = connectionSource.createQueryRunner();
@@ -23,12 +21,14 @@ export class DefaultMediaSeeder implements Seeder {
     await queryRunner.startTransaction();
 
     try {
-      for (let media of mediaContents) {
+      for (const media of mediaContents) {
         const { ...userData } = media;
 
-        let _user = await queryRunner.manager.findOneBy(Media, { id: userData.id });
+        const _user = await queryRunner.manager.findOneBy(Media, {
+          id: userData.id,
+        });
         if (_user) {
-          userData.password = await hash(userData.password)
+          userData.password = await hash(userData.password);
           Object.assign(_user, userData);
           await queryRunner.manager.save(Media, _user);
 
@@ -40,10 +40,9 @@ export class DefaultMediaSeeder implements Seeder {
       }
 
       await queryRunner.commitTransaction();
-
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw new HttpException(error?.message, error?.status)
+      throw new HttpException(error?.message, error?.status);
     } finally {
       await queryRunner.release();
     }
